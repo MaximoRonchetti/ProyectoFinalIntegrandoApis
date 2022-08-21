@@ -184,6 +184,49 @@ namespace MiPrimeraApi.Repository
             
         }
 
+        public static bool ModificarStockProducto(Producto producto, int idUsuario)
+        {
+            bool resultado = false;
+
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    string queryUpdate = "UPDATE Producto SET Stock = Stock - @vStockParameter WHERE Id = @vIdParameter " +
+                        "AND IdUsuario = @vIdUsuario";
+
+                    SqlParameter idParameter = new SqlParameter("vIdParameter", SqlDbType.Int) { Value = producto.Id };
+                    SqlParameter stockParameter = new SqlParameter("vStockParameter", SqlDbType.Int) { Value = producto.Stock };
+                    SqlParameter idUsuarioParameter = new SqlParameter("vIdUsuario", SqlDbType.BigInt) { Value = idUsuario };
+
+                    sqlConnection.Open();
+
+                    using (SqlCommand sqlCommand = new SqlCommand(queryUpdate, sqlConnection))
+                    {
+                        sqlCommand.Parameters.Add(stockParameter);
+                        sqlCommand.Parameters.Add(idParameter);
+                        sqlCommand.Parameters.Add(idUsuarioParameter);
+
+                        int numberOfRows = sqlCommand.ExecuteNonQuery();
+
+                        if (numberOfRows > 0)
+                        {
+                            resultado = true;
+                        }
+                    }
+                    sqlConnection.Close();
+                }
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+
         public static int EliminarProducto(int productoId)
         {
             int resultado = 0;

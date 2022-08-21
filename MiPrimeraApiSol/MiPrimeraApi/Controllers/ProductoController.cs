@@ -6,7 +6,7 @@ namespace MiPrimeraApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductoController : Controller
+    public class ProductoController : ControllerBase
     {
         [HttpPost (Name = "Agregar Producto")]
         public bool AddProducto(/*string nombreUsuario,*/ [FromBody]Producto producto  /*[FromBody]string descripcion, [FromBody]double costo, [FromBody]double precioVenta, [FromBody]int stock*/)

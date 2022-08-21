@@ -15,9 +15,5 @@
             PrecioVenta = precioVenta;
             Stock = stock;
         }
-        public Producto()
-        {
-
-        }
     }
 }

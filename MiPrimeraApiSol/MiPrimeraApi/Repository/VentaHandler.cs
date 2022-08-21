@@ -1,11 +1,13 @@
 ﻿using MiPrimeraApi.Model;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace MiPrimeraApi.Repository
 {
-    internal class VentaHandler : DbHandler
+    public static class VentaHandler
     {
-        public List<Venta> TraerVentas(Usuario pUsuario)
+        public const string ConnectionString = "Server=localhost;Database=SistemaGestion;Trusted_Connection=true";
+        public static List<Venta> TraerVentas(Usuario pUsuario)
         {
             List<Venta> ventas = new List<Venta>();
             using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
@@ -43,6 +45,83 @@ namespace MiPrimeraApi.Repository
                 }
             }
             return ventas;
+        }
+
+        public static Venta TraerUltimaVenta()
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+            {
+                string queryTraerUltimaVenta = "SELECT TOP 1 * FROM Venta ORDER BY Id DESC";
+
+                sqlConnection.Open();
+
+                using (SqlCommand sqlCommand = new SqlCommand(queryTraerUltimaVenta, sqlConnection))
+                {
+
+                    using (SqlDataReader dataReader = sqlCommand.ExecuteReader())
+                    {
+                        if (dataReader.HasRows)
+                        {
+                            while (dataReader.Read())
+                            {
+                                Venta venta = new Venta();
+
+                                venta.Id = Convert.ToInt32(dataReader["Id"]);
+                                venta.Comentarios = dataReader["Comentarios"].ToString();
+
+                                return venta;
+                            }
+                        }
+                        return null;
+                    }
+                    sqlConnection.Close();
+                }
+            }
+
+        }
+
+        public static bool AgergarVenta(List<Producto> productos, int idUsuario)
+        {
+            bool resultado = false;
+
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    string queryInsert = "INSERT INTO Venta " +
+                        "(Comentarios) VALUES (@vComentariosParameter);";
+
+                    SqlParameter comentarioParameter = new SqlParameter("vComentariosParameter", SqlDbType.VarChar) { Value = null };
+
+                    sqlConnection.Open();
+
+                    using (SqlCommand sqlCommand = new SqlCommand(queryInsert, sqlConnection))
+                    {
+                        sqlCommand.Parameters.Add(comentarioParameter);
+
+                        int numberOfRows = sqlCommand.ExecuteNonQuery();
+
+                        if (numberOfRows > 0)
+                        {
+                            resultado = true;
+                        }
+                    }
+                    sqlConnection.Close();
+                }
+
+                Venta ultimaVenta = TraerUltimaVenta();
+
+                foreach (Producto producto in productos)
+                {
+                    ProductoHandler.ModificarStockProducto(producto, idUsuario);
+                    ProductoVendidoHandler.AgregarProductoVendido(producto, ultimaVenta);
+                }
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

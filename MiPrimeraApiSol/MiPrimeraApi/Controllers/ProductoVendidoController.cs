@@ -2,11 +2,8 @@
 
 namespace MiPrimeraApi.Controllers
 {
-    public class ProductoVendidoController : Controller
+    public class ProductoVendidoController : ControllerBase
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+
     }
 }

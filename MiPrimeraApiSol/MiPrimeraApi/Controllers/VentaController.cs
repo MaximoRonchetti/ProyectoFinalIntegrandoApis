@@ -1,12 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MiPrimeraApi.Model;
+using MiPrimeraApi.Repository;
 
 namespace MiPrimeraApi.Controllers
 {
-    public class VentaController : Controller
+
+    [ApiController]
+    [Route("[controller]")]
+    public class VentaController : ControllerBase
     {
-        public IActionResult Index()
+        [HttpPost (Name = "Agregar Venta")]
+        public void AddVenta([FromBody]List<Producto> productos, int idUsuario)
         {
-            return View();
+            VentaHandler.AgergarVenta (productos, idUsuario);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace MiPrimeraApi.Controllers
     {
         //Usuario usuarioActual;
 
-        [HttpGet (Name = "ConseguirUsuarios")]
+        [HttpGet (Name = "Conseguir Usuario")]
         public Usuario GetUsuario(string nombreUsuario)
         {
             Usuario usuarioActual = UsuarioHandler.TraerUsuario(nombreUsuario);
@@ -24,13 +24,13 @@ namespace MiPrimeraApi.Controllers
         //    return UsuarioHandler.EliminarUsuario(id);
         //}
 
-        //[HttpPut (Name = "AgregarUsuario")]
+        //[HttpPost (Name = "AgregarUsuario")]
         //public bool AddUsuario([FromBody] Usuario usuario)
         //{
         //    return UsuarioHandler.CrearUsuario(usuario);
         //}
 
-        [HttpPut (Name = "ActualizarUsuario")]
+        [HttpPut (Name = "Actualizar Usuario")]
         public bool UpdateUsuario(Usuario usuario/*string nombreUsuario |string nombreUsuarioACambiar,string nuevoNombre, string nuevoApellido, string nuevoNombreUsuario,*/
             /*string nuevoConstraseña, string nuevoMail*/)
         {

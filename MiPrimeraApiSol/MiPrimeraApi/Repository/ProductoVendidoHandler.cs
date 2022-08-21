@@ -84,5 +84,47 @@ namespace MiPrimeraApi.Repository
 
         }
 
+
+        public static bool AgregarProductoVendido(Producto producto, Venta venta)
+        {
+            bool resultado = false;
+
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    string queryInsert = "INSERT INTO ProductoVendido " +
+                        "(Stock, IdProducto, IdVenta,) VALUES " +
+                        "(@vStockParameter, @vIdProductoParameter, @vIdVentaParameter,)";
+
+                    SqlParameter stockParameter = new SqlParameter("vStockParameter", SqlDbType.Int) { Value = producto.Stock };
+                    SqlParameter idProductoParameter = new SqlParameter("vIdProductoParameter", SqlDbType.BigInt) { Value = producto.Id };
+                    SqlParameter idVentaParameter = new SqlParameter("vIdVentaParameter", SqlDbType.BigInt) { Value = venta.Id };
+
+                    sqlConnection.Open();
+
+                    using (SqlCommand sqlCommand = new SqlCommand(queryInsert, sqlConnection))
+                    {
+                        sqlCommand.Parameters.Add(stockParameter);
+                        sqlCommand.Parameters.Add(idProductoParameter);
+                        sqlCommand.Parameters.Add(idVentaParameter);
+
+                        int numberOfRows = sqlCommand.ExecuteNonQuery();
+
+                        if (numberOfRows > 0)
+                        {
+                            resultado = true;
+                        }
+                    }
+
+                    sqlConnection.Close();
+                }
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
